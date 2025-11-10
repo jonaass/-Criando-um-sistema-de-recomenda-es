@@ -10,16 +10,11 @@ avaliacoes = {
 ##print(avaliacoes['Jonas']['Matrix'])  
 
 def distancia_euclidiana(usuario1, usuario2, avaliacoes):
-    filmes_em_comum = []
-    for filme in avaliacoes[usuario1]:
-        if filme in avaliacoes[usuario2]:
-            filmes_em_comum.append(filme)
-    if len(filmes_em_comum) == 0:
+    filmes1, filmes2 = avaliacoes[usuario1], avaliacoes[usuario2]
+    comuns = set(filmes1).intersection(filmes2)
+    if not comuns:
         return None
-    soma = 0
-    for filme in filmes_em_comum:
-        soma += (avaliacoes[usuario1][filme] - avaliacoes[usuario2][filme]) ** 2
-    return math.sqrt(soma)
+    return math.sqrt(sum(map(lambda f: (filmes1[f] - filmes2[f]) ** 2, comuns)))
 
 ##print(distancia_euclidiana('Jonas', 'Tony', avaliacoes))
 ##print(distancia_euclidiana('Jonas', 'Sophia', avaliacoes))
