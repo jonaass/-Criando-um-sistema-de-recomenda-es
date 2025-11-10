@@ -7,7 +7,7 @@ avaliacoes = {
     'Fernanda': {'Avatar': 4.5, 'Titanic': 3.0, 'Interestelar': 4.5, 'Duna': 4.0}
 }
 
-print(avaliacoes['Jonas']['Matrix'])  
+##print(avaliacoes['Jonas']['Matrix'])  
 
 def distancia_euclidiana(usuario1, usuario2, avaliacoes):
     filmes_em_comum = []
@@ -21,5 +21,19 @@ def distancia_euclidiana(usuario1, usuario2, avaliacoes):
         soma += (avaliacoes[usuario1][filme] - avaliacoes[usuario2][filme]) ** 2
     return math.sqrt(soma)
 
-print(distancia_euclidiana('Jonas', 'Tony', avaliacoes))
-print(distancia_euclidiana('Jonas', 'Sophia', avaliacoes))
+##print(distancia_euclidiana('Jonas', 'Tony', avaliacoes))
+##print(distancia_euclidiana('Jonas', 'Sophia', avaliacoes))
+
+
+def vizinhos(usuario, avaliacoes):
+    distancias = []
+    for outro in avaliacoes:
+        if outro != usuario:
+            distancia = distancia_euclidiana(usuario, outro, avaliacoes)
+            if distancia is not None:
+                distancias.append((outro, distancia))
+    # Ordena pela menor distância
+    distancias.sort(key=lambda x: x[1])
+    return distancias
+
+print(vizinhos('Jonas', avaliacoes))
