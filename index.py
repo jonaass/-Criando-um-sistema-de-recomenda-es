@@ -1,5 +1,6 @@
 import math
 
+
 avaliacoes = {
     'Jonas': {'Matrix': 4.5, 'Avatar': 3.0, 'Titanic': 4.0, 'Interestelar': 5.0},
     'Tony': {'Matrix': 5.0, 'Avatar': 3.5, 'Titanic': 4.5, 'Interestelar': 4.0, 'Duna': 5.0},
@@ -16,67 +17,54 @@ def distancia_euclidiana(usuario1, usuario2, avaliacoes):
         return None
     return math.sqrt(sum(map(lambda f: (filmes1[f] - filmes2[f]) ** 2, comuns)))
 
-##print(distancia_euclidiana('Jonas', 'Tony', avaliacoes))
-##print(distancia_euclidiana('Jonas', 'Sophia', avaliacoes))
+##print("Jonas x Tony =", distancia_euclidiana("Jonas", "Tony", avaliacoes))
+##print("Jonas x Sophia =", distancia_euclidiana("Jonas", "Sophia", avaliacoes))
+##print("Jonas x Fernanda =", distancia_euclidiana("Jonas", "Fernanda", avaliacoes))
 
 
-def vizinhos(usuario, avaliacoes):
+def vizinhos_proximos(usuario, avaliacoes, k=3):
     distancias = []
     for outro in avaliacoes:
-        if outro != usuario:
-            distancia = distancia_euclidiana(usuario, outro, avaliacoes)
-            if distancia is not None:
-                distancias.append((outro, distancia))
-    # Ordena pela menor distância
-    distancias.sort(key=lambda x: x[1])
-    return distancias
-
-##print(vizinhos('Jonas', avaliacoes))
-
-
-def recomendar(usuario, avaliacoes, k=2):
-    # Encontra os k vizinhos mais próximos
-    vizinho = vizinhos(usuario, avaliacoes)[:k]
-    
-    # Dicionário para somar notas ponderadas
-    recomendacoes = {}
-    
-    for vizinho, distancia in vizinho:
-        # Evita divisão por zero
-        if distancia == 0:
+        if outro == usuario:
             continue
-        
-        for filme in avaliacoes[vizinho]:
-            # Só recomenda filmes que o usuário ainda não avaliou
-            if filme not in avaliacoes[usuario]:
-                # Quanto menor a distância, maior o peso
-                peso = 1 / distancia
+        d = distancia_euclidiana(usuario, outro, avaliacoes)
+        if d is not None:
+            distancias.append((outro, d))
+    distancias.sort(key=lambda x: x[1])
+    return distancias[:k]
+##print("Vizinhos de Jonas:", vizinhos_proximos("Jonas", avaliacoes, k=3))
+
+
+def recomendar_filmes(usuario, avaliacoes, k=3):
+    vizinhos = vizinhos_proximos(usuario, avaliacoes, k)
+    notas_usuario = avaliacoes[usuario]
+    recomendacoes = {}
+    for vizinho, dist in vizinhos:
+        for filme, nota in avaliacoes[vizinho].items():
+            if filme not in notas_usuario:
                 if filme not in recomendacoes:
-                    recomendacoes[filme] = avaliacoes[vizinho][filme] * peso
-                else:
-                    recomendacoes[filme] += avaliacoes[vizinho][filme] * peso
-    
-    # Ordenar por nota (maior primeiro)
-    recomendacoes = sorted(recomendacoes.items(), key=lambda x: x[1], reverse=True)
-    return recomendacoes
+                    recomendacoes[filme] = []
+                recomendacoes[filme].append(nota)
+    recomendacoes_finais = {
+        filme: sum(notas) / len(notas)
+        for filme, notas in recomendacoes.items()
+    }
+    return sorted(recomendacoes_finais.items(), key=lambda x: x[1], reverse=True)
 
-print(recomendar('Jonas', avaliacoes, k=2))
+##print("Recomendações para Jonas:", recomendar_filmes("Jonas", avaliacoes, k=3))
 
-def similaridade_cosseno(usuario1, usuario2, avaliacoes):
-    filmes_em_comum = []
-    for filme in avaliacoes[usuario1]:
-        if filme in avaliacoes[usuario2]:
-            filmes_em_comum.append(filme)
-    
-    if len(filmes_em_comum) == 0:
-        return 0
-    
-    # Produto escalar e magnitude
-    numerador = sum(avaliacoes[usuario1][f] * avaliacoes[usuario2][f] for f in filmes_em_comum)
-    soma1 = sum(avaliacoes[usuario1][f] ** 2 for f in filmes_em_comum)
-    soma2 = sum(avaliacoes[usuario2][f] ** 2 for f in filmes_em_comum)
-    
-    denominador = math.sqrt(soma1) * math.sqrt(soma2)
-    if denominador == 0:
-        return 0
-    return numerador / denominador
+def prever_nota(usuario, filme, avaliacoes, k=3):
+    vizinhos = vizinhos_proximos(usuario, avaliacoes, k)
+    notas = []
+    for vizinho, dist in vizinhos:
+        if filme in avaliacoes[vizinho]:
+            notas.append(avaliacoes[vizinho][filme])
+    if not notas:
+        return None
+    return sum(notas) / len(notas)
+
+##print("Previsão da nota de Jonas para 'Duna':", prever_nota("Jonas", "Duna", avaliacoes, k=3))
+
+
+print("Usuários disponíveis:", ", ".join(avaliacoes.keys()))
+usuario_escolhido = input("\nDigite o nome do usuário que você quer analisar: ").strip()
