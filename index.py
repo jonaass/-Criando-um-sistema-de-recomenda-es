@@ -65,6 +65,40 @@ def prever_nota(usuario, filme, avaliacoes, k=3):
 
 ##print("Previsão da nota de Jonas para 'Duna':", prever_nota("Jonas", "Duna", avaliacoes, k=3))
 
+def prever_nota(usuario, filme, avaliacoes, k=3):
+    vizinhos = vizinhos_proximos(usuario, avaliacoes, k)
+
+    notas = [
+        avaliacoes[v][filme]
+        for v, _ in vizinhos
+        if filme in avaliacoes[v]
+    ]
+
+    if filme in avaliacoes[usuario]:
+        notas.append(avaliacoes[usuario][filme])
+
+    if not notas:
+        return None
+
+    return round(sum(notas) / len(notas), 2)
+
+
 
 print("Usuários disponíveis:", ", ".join(avaliacoes.keys()))
 usuario_escolhido = input("\nDigite o nome do usuário que você quer analisar: ").strip()
+
+if usuario_escolhido not in avaliacoes:
+    print("\n❌ Usuário não encontrado.")
+else:
+    print("\n===== RESULTADOS PARA:", usuario_escolhido, "=====")
+
+    print("\n🔹 Vizinhos mais próximos:")
+    print(vizinhos_proximos(usuario_escolhido, avaliacoes, k=3))
+
+    print("\n🔹 Recomendações de filmes:")
+    print(recomendar_filmes(usuario_escolhido, avaliacoes, k=3))
+
+    filme_desejado = input("\nDigite um filme para prever a nota (ex: Duna): ").strip()
+
+    print("\n🔹 Previsão da nota:")
+    print(prever_nota(usuario_escolhido, filme_desejado, avaliacoes, k=3))
