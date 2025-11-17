@@ -127,15 +127,15 @@ def mostrar_resultados():
 
     texto_resultado.delete("1.0", tk.END)
 
-    texto_resultado.insert(tk.END, f"===== RESULTADOS PARA: {usuario} =====\n\n")
+    texto_resultado.insert(tk.END, f"===== Resultados para o usuário: {usuario} =====\n\n")
 
     texto_resultado.insert(tk.END, "Filmes avaliados pelo usuário:\n")
     for filme, nota in avaliacoes[usuario].items():
         texto_resultado.insert(tk.END, f"• {filme}: {nota}\n")
 
-    texto_resultado.insert(tk.END, "\nVizinhos mais próximos:\n")
-    for v, d in vizinhos:
-        texto_resultado.insert(tk.END, f"• {v}: distância {d}\n")
+    ##texto_resultado.insert(tk.END, "\nVizinhos mais próximos:\n")
+    ##for v, d in vizinhos:
+        ##texto_resultado.insert(tk.END, f"• {v}: distância {d}\n")
 
     texto_resultado.insert(tk.END, "\nRecomendações de filmes:\n")
     for filme, nota in recomendacoes:
