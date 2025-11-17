@@ -133,9 +133,9 @@ def mostrar_resultados():
     for filme, nota in avaliacoes[usuario].items():
         texto_resultado.insert(tk.END, f"• {filme}: {nota}\n")
 
-    ##texto_resultado.insert(tk.END, "\nVizinhos mais próximos:\n")
-    ##for v, d in vizinhos:
-        ##texto_resultado.insert(tk.END, f"• {v}: distância {d}\n")
+    texto_resultado.insert(tk.END, "\nVizinhos mais próximos:\n")
+    for v, d in vizinhos:
+        texto_resultado.insert(tk.END, f"• {v}: distância {d}\n")
 
     texto_resultado.insert(tk.END, "\nRecomendações de filmes:\n")
     for filme, nota in recomendacoes:
